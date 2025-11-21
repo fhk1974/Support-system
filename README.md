@@ -1,250 +1,163 @@
-GS SOA & WebServices – Support System (Gestão de Chamados)
-Integrantes
+🚀 GS SOA & WebServices – Support System (Gestão de Chamados)
+👥 Integrantes
 
 Fabio Hideki Kamikihara – RM550610
 
 Eduardo Osorio – RM550161
 
-Descrição do Projeto
+📌 Descrição do Projeto
 
-Este projeto consiste em uma API REST para gestão de chamados de suporte (HelpDesk).
-Ele permite registrar usuários, realizar login, criar chamados, alterar status e controlar permissões de acordo com o perfil de cada usuário.
+Este projeto consiste em uma API REST para gestão de chamados de suporte (HelpDesk), permitindo:
 
-A API foi construída seguindo os critérios da disciplina de SOA & WebServices, incluindo:
+Registro e autenticação de usuários
 
-Autenticação JWT
+Controle de acesso por perfis (USER / ADMIN)
 
-Autorização por perfis (USER / ADMIN)
+Criação, listagem e gerenciamento de chamados
 
-Política de sessão STATELESS
+Alteração de status e atribuição de chamados
 
-Entities, DTOs, VOs e Enums
+Utilização de JWT para autenticação
 
-Organização modular
+Padrão STATELESS para sessões
 
-Tratamento global de exceções
+Respostas padronizadas e tratamento global de exceções
 
-Padrão de resposta padronizado
+O sistema foi desenvolvido atendendo todos os critérios da GS de SOA & WebServices.
 
-O sistema é simples, direto e funcional, atendendo exatamente os requisitos solicitados na GS.
+🧩 Funcionalidades
+🔐 Autenticação & Segurança
 
-Tecnologias Utilizadas
+Login com JWT
 
-Java 17
+Middleware de validação do token
 
-Spring Boot 3
+Perfis:
 
-Spring Web
+ADMIN: controla tudo
 
-Spring Data JPA
+USER: cria e consulta seus próprios chamados
 
-Spring Security
+Política de sessão: STATELESS
 
-JWT (JJwt)
+🎫 Gestão de Chamados
 
-H2 Database (em memória — não precisa MySQL)
-
-Maven
-
-Modelagem
-Entidade User
-
-id (Long)
-
-name (String)
-
-email (String, único)
-
-password (String, hash)
-
-role (ADMIN / USER)
-
-contactInfo (VO: phone, department)
-
-createdAt (LocalDateTime)
-
-Entidade Ticket
-
-id (Long)
-
-title
-
-description
-
-status (OPEN / IN_PROGRESS / CLOSED)
-
-priority (LOW / MEDIUM / HIGH)
-
-createdAt / updatedAt
-
-createdBy (User)
-
-assignedTo (User, opcional)
-
-Value Object
-
-ContactInfoVO → phone, department
-
-Enums
-
-Role
-
-TicketStatus
-
-Priority
-
-Endpoints Principais
-🔐 Autenticação
-Registrar usuário
-POST /auth/register
-
-
-Exemplo:
-
-{
-  "name": "Admin",
-  "email": "admin@teste.com",
-  "password": "123456",
-  "role": "ADMIN"
-}
-
-Login
-POST /auth/login
-
-
-Exemplo:
-
-{
-  "email": "admin@teste.com",
-  "password": "123456"
-}
-
-
-Retorno:
-
-{
-  "status": "ok",
-  "message": "Login realizado com sucesso",
-  "data": {
-    "token": "jwt_aqui",
-    "type": "Bearer"
-  }
-}
-
-🎫 Chamados (Tickets)
 Criar chamado
-POST /tickets
-Authorization: Bearer <TOKEN>
 
-Listar chamados do usuário
-GET /tickets
-Authorization: Bearer <TOKEN>
+Listar chamados do usuário logado
 
 Listar todos os chamados (ADMIN)
-GET /tickets/all
-Authorization: Bearer <TOKEN_ADMIN>
 
 Atualizar chamado
-PUT /tickets/{id}
 
-Alterar status (ADMIN)
-PUT /tickets/{id}/status
+Mudar status (OPEN, IN_PROGRESS, CLOSED)
 
-Atribuir chamado (ADMIN)
-PUT /tickets/{id}/assign/{userId}
+Atribuir chamado a outro usuário (ADMIN)
 
-Padrão de Resposta
+🧱 Estrutura da Aplicação
 
-Todas as respostas seguem este formato:
+Entities: User, Ticket
 
-{
-  "status": "ok" | "error",
-  "message": "Mensagem",
-  "data": { }
-}
+Enums: Role, TicketStatus, Priority
 
-Como Rodar o Projeto
+VO: ContactInfoVO
+
+DTOs: Login, Registro, TicketRequest, TicketResponse
+
+Controllers: AuthController, TicketController
+
+Services: AuthService, TicketService
+
+Security: JwtUtil, JwtAuthFilter, SecurityConfig
+
+Exception Handling: GlobalExceptionHandler
+
+🛠 Tecnologias Utilizadas
+Tecnologia	Versão	Uso
+Java	17	Linguagem principal
+Spring Boot	3	Base da aplicação
+Spring Web	-	Criação dos endpoints
+Spring Security	-	Autenticação / autorização
+Spring Data JPA	-	Persistência
+H2 Database	-	Banco em memória
+JWT (jjwt)	0.11.x	Tokens de autenticação
+Maven	-	Gerenciador de dependências
+🗂 Estrutura de Pastas
+/src
+ └── main
+     ├── java
+     │    └── com.support.system
+     │          ├── controllers
+     │          ├── dto
+     │          ├── entities
+     │          ├── enums
+     │          ├── exceptions
+     │          ├── repositories
+     │          ├── security
+     │          ├── services
+     │          └── vo
+     └── resources
+          ├── application.properties
+          └── data.sql  (carga inicial opcional)
+
+▶ Como Rodar o Projeto
 1. Pré-requisitos
 
 Java 17
 
 Maven
 
-(Banco não precisa instalar, usa H2)
+Não precisa instalar banco de dados (H2 em memória)
 
-2. Rodar a API
-
-Dentro da pasta do projeto:
-
+2. Executar
 mvn spring-boot:run
 
+3. Acessar API
 
-A aplicação irá iniciar em:
+Servidor sobe em:
 
-http://localhost:8080
+👉 http://localhost:8080
 
-3. Console do H2 (opcional)
-http://localhost:8080/h2-console
+4. Console do H2
 
+👉 http://localhost:8080/h2-console
 
-Config padrão:
+Configuração:
 
 JDBC URL: jdbc:h2:mem:supportdb
 
-User: sa
+Usuário: sa
 
-Password: (vazio)
+Senha: (vazio)
 
-Fluxo de Teste Rápido
-1. Registrar ADMIN
+🧪 Endpoints Principais
+🔐 Autenticação
+Registrar
+POST /auth/register
 
-email: admin@teste.com
+Login
+POST /auth/login
 
-2. Registrar USER
 
-email: user@teste.com
+Retorno:
 
-3. Fazer login com ambos
+{
+  "status": "ok",
+  "data": {
+    "token": "JWT_AQUI",
+    "type": "Bearer"
+  }
+}
 
-copiar o token JWT
+🎫 Chamados
+Criar Chamado (USER/ADMIN)
+POST /tickets
+Authorization: Bearer <TOKEN>
 
-4. Como USER
+Listar Meus Chamados
+GET /tickets
+Authorization: Bearer <TOKEN>
 
-Criar e visualizar chamados
-
-5. Como ADMIN
-
-Ver todos, alterar status e atribuir chamados
-
-✔ Critérios da GS atendidos
-✓ Entities, DTOs, VOs e Enums
-
-Presentes e organizados no projeto.
-
-✓ ResponseEntity em todos os endpoints
-
-Todas as respostas são padronizadas.
-
-✓ Tratamento global de exceções
-
-GlobalExceptionHandler implementado.
-
-✓ Autenticação de usuário
-
-Login com JWT.
-
-✓ Autorização por perfil (USER/ADMIN)
-
-Endpoints protegidos e validados.
-
-✓ Sessão STATELESS com JWT
-
-SessionCreationPolicy.STATELESS.
-
-✓ Casos de uso separados em Services
-
-Regras de negócio isoladas.
-
-✓ Organização modular e reutilizável
-
-Pacotes bem divididos seguindo SOA.
+Listar Todos (ADMIN)
+GET /tickets/all
+Authorization: Bearer <TOKEN>
